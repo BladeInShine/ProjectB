@@ -1,11 +1,14 @@
-import weka.clusterers.ClusterEvaluation;
-import weka.clusterers.EM;
+import weka.classifiers.Evaluation;
+import weka.classifiers.trees.J48;
+import weka.core.Debug;
 import weka.core.Instances;
-import weka.filters.Filter;
-import weka.filters.unsupervised.attribute.Remove;
+import weka.gui.treevisualizer.PlaceNode2;
+import weka.gui.treevisualizer.TreeVisualizer;
 
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
+
 
 /**
  * Created by BladeInShine on 16/4/24.
@@ -20,46 +23,39 @@ public class Classifier {
      * @throws Exception  if something goes wrong
      */
     public static void main(String[] args) throws Exception {
-//        // load data
-//        ArffLoader loader = new ArffLoader();
-//        loader.setFile(new File("/Users/BladeInShine/Documents/ProjectB/src/main/resources/DeathRecords.arff"));
-//        Instances structure = loader.getStructure();
-//        structure.setClassIndex(structure.numAttributes() - 1);
-//
-//        // train NaiveBayes
-//        NaiveBayesUpdateable nb = new NaiveBayesUpdateable();
-//        nb.buildClassifier(structure);
-//        Instance current;
-//        while ((current = loader.getNextInstance(structure)) != null)
-//            nb.updateClassifier(current);
-//
-//        // output generated model
-//        System.out.println(nb);
-
-
         // load data
         Instances data = new Instances(new BufferedReader(new FileReader("/Users/BladeInShine/Documents/ProjectB/src/main/resources/DeathRecords.arff")));
-        data.setClassIndex(data.numAttributes() - 1);
+        data.setClassIndex(data.numAttributes() - 2);
 
-        // generate data for clusterer (w/o class)
-        Remove filter = new Remove();
-        filter.setAttributeIndices("" + (data.classIndex() + 1));
-        filter.setInputFormat(data);
-        Instances dataClusterer = Filter.useFilter(data, filter);
+        J48 cls = new J48();
+        //RandomForest cls = new RandomForest();
+        cls.buildClassifier(data);
 
-        // train clusterer
-        EM clusterer = new EM();
-        // set further options for EM, if necessary...
-        clusterer.buildClusterer(dataClusterer);
+        // display classifier
+        final javax.swing.JFrame jf =
+                new javax.swing.JFrame("Weka Classifier Tree Visualizer: J48");
+        jf.setSize(500,400);
+        jf.getContentPane().setLayout(new BorderLayout());
+        TreeVisualizer tv = new TreeVisualizer(null,
+                cls.graph(),
+                new PlaceNode2());
+        jf.getContentPane().add(tv, BorderLayout.CENTER);
+        jf.addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                jf.dispose();
+            }
+        });
 
-        // evaluate clusterer
-        ClusterEvaluation eval = new ClusterEvaluation();
-        eval.setClusterer(clusterer);
-        eval.evaluateClusterer(data);
+        jf.setVisible(true);
+        tv.fitToScreen();
 
-        // print results
-        System.out.println(eval.clusterResultsToString());
-
+        Evaluation eval = new Evaluation(data);
+        Debug.Random rand = new Debug.Random(1);  // using seed = 1
+        int folds = 10;
+        eval.crossValidateModel(cls, data, folds, rand);
+        System.out.println(eval.toClassDetailsString());
+        System.out.println(eval.toCumulativeMarginDistributionString());
+        System.out.println(eval.toSummaryString());
     }
 
 }

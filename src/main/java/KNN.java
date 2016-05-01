@@ -13,7 +13,7 @@ public class KNN {
 
     public static void main(String[] args) throws Exception {
         // load data
-        Instances data = new Instances(new BufferedReader(new FileReader("/Users/BladeInShine/Documents/ProjectB/src/main/resources/DeathRecords.arff")));
+        Instances data = new Instances(new BufferedReader(new FileReader("src/main/resources/try3_1.arff")));
         data.setClassIndex(data.numAttributes() - 2);
 
         IBk cls = new IBk();

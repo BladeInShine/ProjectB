@@ -24,49 +24,43 @@ public class Cluster_kmeans {
         options[0] = "-t";
         options[1] = filename;
         cl = new SimpleKMeans();
-        cl.setSeed(3);
 
         //important parameter to set: preserver order, number of cluster.
         cl.setPreserveInstancesOrder(true);
-        cl.setNumClusters(3);
+        cl.setNumClusters(4);
+        cl.setSeed(4);
 
         System.out.println(
                 ClusterEvaluation.evaluateClusterer(cl, options));
 
         // manual call
-        System.out.println("\n--> manual");
-        cl   = new SimpleKMeans();
-        //cl.setSeed(10);
-
-        //important parameter to set: preserver order, number of cluster.
-        cl.setPreserveInstancesOrder(true);
-        cl.setNumClusters(3);
-
-
-        cl.buildClusterer(data);
-        eval = new ClusterEvaluation();
-        eval.setClusterer(cl);
-        eval.evaluateClusterer(new Instances(data));
-        System.out.println("# of clusters: " + eval.getNumClusters());
+//        System.out.println("\n--> manual");
+//        cl   = new SimpleKMeans();
+//        cl.setSeed(10);
+//
+//        //important parameter to set: preserver order, number of cluster.
+//
+//        cl.setNumClusters(4);
+//
+//
+//        cl.buildClusterer(data);
+//        eval = new ClusterEvaluation();
+//        eval.setClusterer(cl);
+//        eval.evaluateClusterer(new Instances(data));
+//        System.out.println("# of clusters: " + eval.getNumClusters());
 
 
         // This array returns the cluster number (starting with 0) for each instance
         // The array has as many elements as the number of instances
-        int[] assignments = cl.getAssignments();
+//        int[] assignments = cl.getAssignments();
+//
+//        int i=0;
+//        for(int clusterNum : assignments) {
+//            //System.out.printf("Instance %d -> Cluster %d \n", i, clusterNum);
+//            i++;
+//        }
 
-        int i=0;
-        for(int clusterNum : assignments) {
-            //System.out.printf("Instance %d -> Cluster %d \n", i, clusterNum);
-            i++;
-        }
-        // density based
-        //System.out.println("\n--> density (CV)");
-        //cl   = new SimpleKMeans();
-//        eval = new ClusterEvaluation();
-//        eval.setClusterer(cl);
-        //eval.crossValidateModel(
-        //        cl, data, 10, data.getRandomNumberGenerator(1));
-        System.out.println("# of clusters: " + eval.getNumClusters());
+        //System.out.println("# of clusters: " + eval.getNumClusters());
     }
 
     /**
